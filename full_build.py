@@ -15,6 +15,8 @@ with open('config.json') as file:
     merging    = "ON" if data['merge_client_server'] else "OFF"
     client_log = data['client_logger_verbosity']
     server_log = data['server_logger_verbosity']
+    ver_maj    = data['major_version']
+    ver_min    = data['minor_version']
 
 # Reset the build folder
 
@@ -26,6 +28,9 @@ os.chdir(build_dir)
 # Build the client & server
 
 cmake_args = ['cmake', '..',
+    '-DMAJOR_VERSION=' + str(ver_maj),
+    '-DMINOR_VERSION=' + str(ver_min),
+    '-DCMAKE_BUILD_TYPE=' + config,
     '-DMERGE_CLIENT_SERVER=' + merging,
     '-DCLIENT_LOGGER_VERBOSITY=' + client_log,
     '-DSERVER_LOGGER_VERBOSITY=' + server_log]

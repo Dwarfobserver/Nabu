@@ -10,8 +10,6 @@ option(MERGE_CLIENT_SERVER
     "Merge the client and the server in a single executable"
     OFF)
 
-add_definitions(-D$<MERGE_CLIENT_SERVER:MERGE_CLIENT_SERVER>)
-
 option(CLIENT_LOGGER_VERBOSITY
     "Specify the client logger verbosity between debug, status (by default), warning and error")
 SET   (CLIENT_LOGGER_VERBOSITY "status")
@@ -22,8 +20,18 @@ SET   (SERVER_LOGGER_VERBOSITY "status")
 
 message(STATUS "loglevel=${SERVER_LOGGER_VERBOSITY}")
 
-add_definitions(-DCLIENT_LOGGER_VERBOSITY=${CLIENT_LOGGER_VERBOSITY})
-add_definitions(-DSERVER_LOGGER_VERBOSITY=${SERVER_LOGGER_VERBOSITY})
+add_definitions(
+    -D$<MERGE_CLIENT_SERVER:MERGE_CLIENT_SERVER>
+    -DCLIENT_LOGGER_VERBOSITY=${CLIENT_LOGGER_VERBOSITY}
+    -DSERVER_LOGGER_VERBOSITY=${SERVER_LOGGER_VERBOSITY}
+    -DMAJOR_VERSION=${MAJOR_VERSION}
+    -DMINOR_VERSION=${MINOR_VERSION})
+
+# Show build
+
+message(STATUS "Building Nabu (${CMAKE_BUILD_TYPE}) v${MAJOR_VERSION}.${MINOR_VERSION}")
+message(STATUS "Merge client and server : ${MERGE_CLIENT_SERVER}")
+
 
 # Organize dependencies
 
