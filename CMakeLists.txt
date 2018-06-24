@@ -42,6 +42,6 @@ add_subdirectory(client)
 add_subdirectory(server)
 
 if (MERGE_CLIENT_SERVER)
-    add_executable(nabu "${PROJECT_SOURCE_DIR}/common/src/main.cpp")
+    add_executable(nabu "${PROJECT_SOURCE_DIR}/merge_main.cpp")
     target_link_libraries(nabu PRIVATE common client server)
 endif()
