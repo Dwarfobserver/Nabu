@@ -12,6 +12,13 @@ target_include_directories(server PUBLIC
 target_link_libraries(server PUBLIC
     common)
 
+# executable
+
+if (NOT MERGE_CLIENT_SERVER)
+    add_executable(nabu_server "${CMAKE_CURRENT_SOURCE_DIR}/src/empty.cpp")
+    target_link_libraries(nabu_server PRIVATE server)
+endif()
+
 # tests
 
 add_executable            (server_tests "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp")

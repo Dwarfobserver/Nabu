@@ -1,5 +1,5 @@
 
-#include <common/core.hpp>
+#include <logger.hpp>
 #include <glfw3.h>
 #include <iostream>
 
@@ -15,6 +15,8 @@ int main() {
     glfwMakeContextCurrent(window);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwTerminate();
+
+    logger.status << "client exited successfully\n";
     
     return 0;
 }

@@ -4,7 +4,26 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 enable_testing()
 
-option(MERGE_CLIENT_SERVER "Merge the client and the server in a single executable" OFF)
+# Handle options
+
+option(MERGE_CLIENT_SERVER
+    "Merge the client and the server in a single executable"
+    OFF)
+
+add_definitions(-D$<MERGE_CLIENT_SERVER:MERGE_CLIENT_SERVER>)
+
+option(CLIENT_LOGGER_VERBOSITY
+    "Specify the client logger verbosity between debug, status (by default), warning and error")
+SET   (CLIENT_LOGGER_VERBOSITY "status")
+
+option(SERVER_LOGGER_VERBOSITY
+    "Specify the server logger verbosity between debug, status (by default), warning and error")
+SET   (SERVER_LOGGER_VERBOSITY "status")
+
+message(STATUS "loglevel=${SERVER_LOGGER_VERBOSITY}")
+
+add_definitions(-DCLIENT_LOGGER_VERBOSITY=${CLIENT_LOGGER_VERBOSITY})
+add_definitions(-DSERVER_LOGGER_VERBOSITY=${SERVER_LOGGER_VERBOSITY})
 
 # Organize dependencies
 
@@ -42,6 +61,7 @@ add_subdirectory(client)
 add_subdirectory(server)
 
 if (MERGE_CLIENT_SERVER)
-    add_executable(nabu "${PROJECT_SOURCE_DIR}/merge_main.cpp")
-    target_link_libraries(nabu PRIVATE common client server)
+    add_executable            (nabu "${PROJECT_SOURCE_DIR}/merge_main.cpp")
+    target_include_directories(nabu PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+    target_link_libraries     (nabu PRIVATE client server common)
 endif()

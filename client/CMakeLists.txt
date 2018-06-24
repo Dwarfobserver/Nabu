@@ -17,6 +17,13 @@ target_link_libraries(client PUBLIC
     common
     ${GRAPHIC_LIBRARIES})
 
+# executable
+
+if (NOT MERGE_CLIENT_SERVER)
+    add_executable(nabu_client "${CMAKE_CURRENT_SOURCE_DIR}/src/empty.cpp")
+    target_link_libraries(nabu_client PRIVATE client)
+endif()
+
 # tests
 
 add_executable            (client_tests "${CMAKE_CURRENT_SOURCE_DIR}/tests/main.cpp")

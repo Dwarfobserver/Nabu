@@ -2,7 +2,7 @@
 add_library(common
     "${CMAKE_CURRENT_SOURCE_DIR}/src/dummy.cpp")
 
-target_include_directories(common PUBLIC "${COMMON_INCLUDE_DIR}/common")
+target_include_directories(common PRIVATE ${COMMON_INCLUDE_DIR})
 
 # tests
 
