@@ -1,5 +1,4 @@
 
-#include <common/core.hpp>
 #include <future>
 
 int _client_main();

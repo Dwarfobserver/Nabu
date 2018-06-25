@@ -10,7 +10,7 @@ enum class logger_verbosity {
     error   = 3
 };
 
-inline char const* to_string(logger_verbosity v) {
+inline char const* to_string(logger_verbosity v) noexcept {
     switch (v) {
         case logger_verbosity::debug:   return "debug";
         case logger_verbosity::status:  return "status";

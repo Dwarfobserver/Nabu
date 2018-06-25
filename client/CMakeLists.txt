@@ -1,9 +1,8 @@
 
-add_library(client "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+add_library(client $<$<BOOL:MERGE_CLIENT_SERVER>:${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp>
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/dummy.cpp")
 
-if (MERGE_CLIENT_SERVER)
-    target_compile_definitions(client PRIVATE MERGE_CLIENT)
-endif()
+target_compile_definitions(client PRIVATE $<$<BOOL:MERGE_CLIENT_SERVER>:MERGE_CLIENT>)
 
 target_compile_definitions(client PUBLIC
     ${GRAPHIC_DEFS})
@@ -20,7 +19,7 @@ target_link_libraries(client PUBLIC
 # executable
 
 if (NOT MERGE_CLIENT_SERVER)
-    add_executable(nabu_client "${CMAKE_CURRENT_SOURCE_DIR}/src/empty.cpp")
+    add_executable(nabu_client "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
     target_link_libraries(nabu_client PRIVATE client)
 endif()
 

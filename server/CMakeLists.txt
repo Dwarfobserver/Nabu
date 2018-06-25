@@ -1,9 +1,8 @@
 
-add_library(server "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+add_library(server $<$<BOOL:MERGE_CLIENT_SERVER>:${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp>
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/dummy.cpp")
 
-if (MERGE_CLIENT_SERVER)
-    target_compile_definitions(server PRIVATE MERGE_SERVER)
-endif()
+target_compile_definitions(server PRIVATE $<$<BOOL:MERGE_CLIENT_SERVER>:MERGE_SERVER>)
 
 target_include_directories(server PUBLIC
     ${COMMON_INCLUDE_DIR}
@@ -15,7 +14,7 @@ target_link_libraries(server PUBLIC
 # executable
 
 if (NOT MERGE_CLIENT_SERVER)
-    add_executable(nabu_server "${CMAKE_CURRENT_SOURCE_DIR}/src/empty.cpp")
+    add_executable(nabu_server "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
     target_link_libraries(nabu_server PRIVATE server)
 endif()
 

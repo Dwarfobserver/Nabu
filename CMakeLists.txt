@@ -18,8 +18,6 @@ option(SERVER_LOGGER_VERBOSITY
     "Specify the server logger verbosity between debug, status (by default), warning and error")
 SET   (SERVER_LOGGER_VERBOSITY "status")
 
-message(STATUS "loglevel=${SERVER_LOGGER_VERBOSITY}")
-
 add_definitions(
     -D$<MERGE_CLIENT_SERVER:MERGE_CLIENT_SERVER>
     -DCLIENT_LOGGER_VERBOSITY=${CLIENT_LOGGER_VERBOSITY}
@@ -31,6 +29,8 @@ add_definitions(
 
 message(STATUS "Building Nabu (${CMAKE_BUILD_TYPE}) v${MAJOR_VERSION}.${MINOR_VERSION}")
 message(STATUS "Merge client and server : ${MERGE_CLIENT_SERVER}")
+message(STATUS "Client log level = ${CLIENT_LOGGER_VERBOSITY}")
+message(STATUS "Server log level = ${SERVER_LOGGER_VERBOSITY}")
 
 
 # Organize dependencies
