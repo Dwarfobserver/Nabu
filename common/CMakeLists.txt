@@ -1,6 +1,7 @@
 
 add_library(common
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/dummy.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/channel.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/reactor_base.cpp")
 
 target_include_directories(common PRIVATE ${COMMON_INCLUDE_DIR})
 

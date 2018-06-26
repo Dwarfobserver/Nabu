@@ -38,6 +38,7 @@ message(STATUS "Server log level = ${SERVER_LOGGER_VERBOSITY}")
 set(DEPS_CATCH_DIR "${PROJECT_SOURCE_DIR}/deps/catch-2.2.2")
 set(DEPS_GLEW_DIR  "${PROJECT_SOURCE_DIR}/deps/glew-2.1.0")
 set(DEPS_GLFW_DIR  "${PROJECT_SOURCE_DIR}/deps/glfw-3.2.1")
+set(DEPS_FUN2_DIR  "${PROJECT_SOURCE_DIR}/deps/function2")
 
 set(DEPS_LIBS_DIR $<$<BOOL:WIN32>:libs/win32>)
 
@@ -61,6 +62,9 @@ set(GRAPHIC_LIBRARIES
 set(GRAPHIC_DEFS GLEW_STATIC)
 
 set(TESTS_INCLUDES "${DEPS_CATCH_DIR}/include")
+set(FUN2_INCLUDES  "${DEPS_FUN2_DIR}/include")
+
+include_directories(${FUN2_INCLUDES})
 
 # Add targets
 

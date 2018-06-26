@@ -22,6 +22,7 @@ with open('config.json') as file:
 
 if os.path.exists(build_dir):
     shutil.rmtree(build_dir)
+
 os.mkdir(build_dir)
 os.chdir(build_dir)
 

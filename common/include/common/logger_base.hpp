@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <common/core.hpp>
 #include <fstream>
 #include <mutex>
