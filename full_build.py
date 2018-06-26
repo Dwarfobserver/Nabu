@@ -4,6 +4,7 @@ import sys
 from subprocess import check_call
 import json
 import shutil
+import time
 
 # Get configuration values
 
@@ -22,6 +23,7 @@ with open('config.json') as file:
 
 if os.path.exists(build_dir):
     shutil.rmtree(build_dir)
+    time.sleep(.01)
 
 os.mkdir(build_dir)
 os.chdir(build_dir)
