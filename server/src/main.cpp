@@ -1,30 +1,34 @@
 
-#include <core.hpp>
-#include <common/channel.hpp>
-#include <common/messages.hpp>
+#include <net/server.hpp>
+#include <terminal.hpp>
+#include <database.hpp>
+#include <future>
+#include "reflection.hpp"
+
 
 int main() {
+    try {
+		using namespace nabu;
+		logger.info("Nabu server v{} - {}", NABU_VERSION_STRING, NABU_BUILD_TYPE_STRING);
 
-    logger.status << "server started\n";
+        nabu::terminal terminal;
+        net::server    server { 43210 };
+        auto& db = database;
 
-    auto future = connect_with({ "client" });
-    reactor.add_recurrent([future = std::move(future)] () mutable -> bool {
-        using namespace std::literals;
+        bool quit = false;
+        terminal.commands["quit"] = [&] (auto&) {
+            quit = true;
+        };
 
-        if (future.wait_for(0s) != std::future_status::ready) return false;
-        
-        try {
-            auto c = future.get();
-            logger.status << "client reached\n";
+        while (!quit) {
+            using namespace std::literals;
+            server.update();
+            terminal.update();
+            std::this_thread::sleep_for(20ms);
         }
-        catch (connection_error const& e) {
-            logger.status << "client not reached : " << e.what() << "\n";
-        }
-        return true;
-    });
-    reactor.run();
-    
-    logger.status << "server exited successfully\n";
-    
-    return 0;
+    }
+    catch (std::exception const& e) {
+	    nabu::logger.error("Error '{}' caught in main : {}", nabu::name_of(e), e.what());
+        return 1;
+    }
 }

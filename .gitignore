@@ -1,4 +1,7 @@
 
+/.vs/
+/.idea/
 /.vscode/
 /build/
 /local/
+/CMakeLists.txt.user

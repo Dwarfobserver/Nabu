@@ -1,0 +1,9 @@
+
+{
+    "build_directory": "build",
+    "version_major": 0,
+    "version_minor": 1,
+    "debug_build": true,
+    "target": "common",
+    "build_tests": true
+}

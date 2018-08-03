@@ -11,14 +11,11 @@ I aim for these properties :
 
 ### Building
 
-It only supports msvc for now. Commands to build and test :
+It only supports msvc for now. It builds with CMake and use
+the python script 'full_build.py'. The build configuration is
+written in 'config.json'.
 
-```
+### What is done
 
-md build
-cd build
-cmake .. [-DMERGE_CLIENT_SERVER=ON] (off by default)
-cmake --build . --config [Debug, Release] -- /v:m
-ctest -V -C [Debug, Release]
-
-```
+Working CMake setup for common, client and server parts with
+it's tests.

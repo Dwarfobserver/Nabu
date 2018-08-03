@@ -2,80 +2,79 @@
 project(nabu)
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
-enable_testing()
 
 # Handle options
 
-option(MERGE_CLIENT_SERVER
-    "Merge the client and the server in a single executable"
-    OFF)
+set(VERSION_MAJOR "0" CACHE STRING "The project major version")
+set(VERSION_MINOR "1" CACHE STRING "The project minor version")
 
-option(CLIENT_LOGGER_VERBOSITY
-    "Specify the client logger verbosity between debug, status (by default), warning and error")
-SET   (CLIENT_LOGGER_VERBOSITY "status")
+option(BUILD_CLIENT "Indicates to build the client" ON)
+option(BUILD_SERVER "Indicates to build the server" ON)
+option(BUILD_TESTS  "Indicates to build the tests"  ON)
 
-option(SERVER_LOGGER_VERBOSITY
-    "Specify the server logger verbosity between debug, status (by default), warning and error")
-SET   (SERVER_LOGGER_VERBOSITY "status")
-
-add_definitions(
-    -D$<MERGE_CLIENT_SERVER:MERGE_CLIENT_SERVER>
-    -DCLIENT_LOGGER_VERBOSITY=${CLIENT_LOGGER_VERBOSITY}
-    -DSERVER_LOGGER_VERBOSITY=${SERVER_LOGGER_VERBOSITY}
-    -DMAJOR_VERSION=${MAJOR_VERSION}
-    -DMINOR_VERSION=${MINOR_VERSION})
+if (BUILD_TESTS)
+    enable_testing()
+endif()
 
 # Show build
 
-message(STATUS "Building Nabu (${CMAKE_BUILD_TYPE}) v${MAJOR_VERSION}.${MINOR_VERSION}")
-message(STATUS "Merge client and server : ${MERGE_CLIENT_SERVER}")
-message(STATUS "Client log level = ${CLIENT_LOGGER_VERBOSITY}")
-message(STATUS "Server log level = ${SERVER_LOGGER_VERBOSITY}")
+if (BUILD_CLIENT)
+    if (BUILD_SERVER)
+        set(NABU_BUILD_STRING "client and server")
+    else()
+        set(NABU_BUILD_STRING "client")
+    endif()
+else()
+    if (BUILD_SERVER)
+        set(NABU_BUILD_STRING "server")
+    else()
+        set(NABU_BUILD_STRING "common part")
+    endif()
+endif()
 
+message(STATUS "Building Nabu ${NABU_BUILD_STRING} (${CMAKE_BUILD_TYPE}) v${VERSION_MAJOR}.${VERSION_MINOR}")
 
 # Organize dependencies
 
+set(DEPS_FMT_DIR   "${PROJECT_SOURCE_DIR}/deps/fmt-5.0.0")
+set(DEPS_SFML_DIR  "${PROJECT_SOURCE_DIR}/deps/SFML-2.5.0")
 set(DEPS_CATCH_DIR "${PROJECT_SOURCE_DIR}/deps/catch-2.2.2")
-set(DEPS_GLEW_DIR  "${PROJECT_SOURCE_DIR}/deps/glew-2.1.0")
-set(DEPS_GLFW_DIR  "${PROJECT_SOURCE_DIR}/deps/glfw-3.2.1")
 set(DEPS_FUN2_DIR  "${PROJECT_SOURCE_DIR}/deps/function2")
 set(DEPS_ATT_DIR   "${PROJECT_SOURCE_DIR}/deps/att-1.1.0")
+set(DEPS_BOOST_DIR "${PROJECT_SOURCE_DIR}/deps/boost-1.66.0")
+set(DEPS_SQL_DIR   "${PROJECT_SOURCE_DIR}/deps/sqlite-3.24.0")
 
-set(DEPS_LIBS_DIR $<$<BOOL:WIN32>:libs/win32>)
+add_library(fmt INTERFACE)
+target_include_directories(fmt INTERFACE "${DEPS_FMT_DIR}/include")
+target_compile_definitions(fmt INTERFACE FMT_HEADER_ONLY)
 
-if (NOT DEPS_LIBS_DIR)
-    message(FATAL_ERROR "Librairies not presents for this platform")
-endif()
+add_library(catch INTERFACE)
+target_include_directories(catch INTERFACE "${DEPS_CATCH_DIR}/include")
 
-# Setup common variables
+add_library(function2 INTERFACE)
+target_include_directories(function2 INTERFACE "${DEPS_FUN2_DIR}/include")
 
-set(COMMON_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/common/include")
+add_library(aggregates-to-tuples INTERFACE)
+target_include_directories(aggregates-to-tuples INTERFACE "${DEPS_ATT_DIR}/include")
 
-set(GRAPHIC_INCLUDES 
-    "${DEPS_GLEW_DIR}/include"
-    "${DEPS_GLFW_DIR}/include")
+add_library(callable-traits INTERFACE)
+add_library(boost::callable-traits ALIAS callable-traits)
+target_include_directories(callable-traits INTERFACE "${DEPS_BOOST_DIR}/include")
 
-set(GRAPHIC_LIBRARIES
-    "${DEPS_GLFW_DIR}/${DEPS_LIBS_DIR}/glfw3.lib"
-    "${DEPS_GLEW_DIR}/${DEPS_LIBS_DIR}/glew32s.lib"
-    $<$<BOOL:WIN32>:opengl32>)
+add_library(sqlite STATIC "${DEPS_SQL_DIR}/src/sqlite3.c")
+target_include_directories(sqlite PUBLIC "${DEPS_SQL_DIR}/include")
 
-set(GRAPHIC_DEFS GLEW_STATIC)
-
-set(TESTS_INCLUDES "${DEPS_CATCH_DIR}/include")
-set(FUN2_INCLUDES  "${DEPS_FUN2_DIR}/include")
-set(ATT_INCLUDES   "${DEPS_ATT_DIR}/include")
-
-include_directories(${FUN2_INCLUDES} ${ATT_INCLUDES})
+set(SFML_STATIC_LIBRARIES TRUE)
+set(SFML_DIR "${DEPS_SFML_DIR}/lib/cmake/SFML")
 
 # Add targets
 
 add_subdirectory(common)
-add_subdirectory(client)
-add_subdirectory(server)
 
-if (MERGE_CLIENT_SERVER)
-    add_executable            (nabu "${PROJECT_SOURCE_DIR}/merge_main.cpp")
-    target_include_directories(nabu PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-    target_link_libraries     (nabu PRIVATE client server common)
+if (BUILD_CLIENT)
+    add_subdirectory(client)
+endif()
+
+if (BUILD_SERVER)
+    add_subdirectory(server)
 endif()
